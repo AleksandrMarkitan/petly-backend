@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const { HttpError } = require("../helpers");
-const { User } = require("../models/user");
+const { User } = require("../models/user"); //Перевірити назву моделі
 
 const { SECRET_KEY } = process.env;
 
