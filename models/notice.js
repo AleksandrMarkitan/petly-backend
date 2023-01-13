@@ -5,11 +5,14 @@ const Joi = require("joi");
 const { handleMongooseError } = require("../helpers");
 
 const dateRegex = /^\d{2}\.\d{2}\d{4}$/;
+// .format("DD.MM.YYYY")
 const locationRegex = /^\[A-z]\,\[A-z]$/;
+
+// const priceRegex = /^[1-9][\d]{0,7}[.\d]{0,3}$/;
 
 // --------mongoose shema--------
 
-const noticeShema = new Schema(
+const noticeSchema = new Schema(
   {
     title: { type: String, minlength: 2, maxlength: 48, required: true },
     category: {
@@ -20,12 +23,12 @@ const noticeShema = new Schema(
     name: { type: String, minlength: 2, maxlength: 16},
     birthdate: {
       type: Date,
-      mutch: [dateRegex, "Date must be in format 22.10.2022"],
+      match: [dateRegex, "Date must be in format 22.10.2022"],
     },
     breed: { type: String, minlength: 2, maxlength: 24 },
     location: {
       type: String,
-      mutch: [
+      match: [
         locationRegex,
         "Location must be in format: City,Region (example: Brovary,Kyiv",
       ],
@@ -40,12 +43,13 @@ const noticeShema = new Schema(
     },
 
     favorite: { type: Boolean, default: false },
-    // owner: { type: Schema.Types.ObjectId, ref: "user", required: true },
+    imgURL: { type: String},
+    owner: { type: Schema.Types.ObjectId, ref: "user", required: true },
   },
   { versionKey: false, timestamps: true }
 );
 
-noticeShema.post("save", handleMongooseError);
+noticeSchema.post("save", handleMongooseError);
 
 // --------Joi shemas--------
 
@@ -60,7 +64,7 @@ const schemas = {
   updateNoticeFavoriteShema,
 };
 
-const Notice = model("notice", noticeShema);
+const Notice = model("notice", noticeSchema);
 
 module.exports = {
   Notice,

@@ -1,6 +1,7 @@
-const { validateBody,
-  //  authenticate 
-  } = require("../middlewares");
+const {
+  validateBody,
+  //  authenticate
+} = require("../middlewares");
 
 const { schemas } = require("../models/notice");
 
@@ -9,15 +10,53 @@ const ctrl = require("../controllers/notices");
 const express = require("express");
 const router = express.Router();
 
-router.get("/", 
-// authenticate, 
-ctrl.getAll);
-
-router.patch(
-  "/:noticeId/favorite",
+// отримання оголошень по категоріям
+router.get(
+  "/",
   // authenticate,
-  validateBody(schemas.updateNoticeFavoriteShema),
+  ctrl.getAll
+);
+
+// отримання одного оголошення
+router.get(
+  "/:noticeId",
+  // authenticate,
+  ctrl.getOne
+);
+
+router.post(
+  "/",
+  // authenticate,
+  validateBody(schemas.addSchema),
+  ctrl.add
+);
+
+// додавання оголошення до обраних
+router.patch(
+  "/:noticeId/favorites",
+  // authenticate,
   ctrl.updateFavorite
+);
+
+// отримання оголошень авторизованого користувача доданих ним же в обрані
+router.get(
+  "/favorites",
+  // authenticate,
+  ctrl.getFavorites
+);
+
+// видалення оголошення авторизованого користувача доданих цим же до обраних
+router.delete(
+  "/:noticeId/favorites",
+  // authenticate,
+  ctrl.deleteFavorite
+);
+
+//отримання оголошень авторизованого користувача створених цим же користувачем
+router.get(
+  "/owner",
+  // authenticate,
+  ctrl.getOwner
 );
 
 module.exports = router;
