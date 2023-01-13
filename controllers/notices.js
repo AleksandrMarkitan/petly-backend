@@ -33,12 +33,12 @@ const getOne = async (req, res) => {
 // додавання оголошення до обраних
 const updateFavorite = async (req, res) => {
   const { noticeId } = req.params;
-  const { favoriteNotices } = req.user;
+  const { _id, favoriteNotices } = req.user;
 
   const newFavoritesNotices = favoriteNotices.push(noticeId);
 
   const result = await User.findByIdAndUpdate(
-    noticeId,
+    _id,
     { favoriteNotices: newFavoritesNotices },
     {
       new: true,
