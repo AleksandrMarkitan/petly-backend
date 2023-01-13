@@ -86,6 +86,7 @@ const deleteFavorite = async (req, res) => {
   res.json(result);
 };
 
+// додавання оголошень відповідно до обраної категорії
 const add = async (req, res) => {
   const { _id: owner } = req.user;
   const result = await Notice.create({ ...req.body, owner });
@@ -104,6 +105,18 @@ const getOwner = async (req, res) => {
   res.json(contacts);
 };
 
+//  видалення оголошення авторизованого користувача створеного цим же користувачем
+const deleteById = async (req, res) => {
+  const { noticeId } = req.params;
+  const result = await Notice.findByIdAndRemove(noticeId);
+  if (!result) {
+    throw HttpError(404, "Not Found");
+  }
+  res.json({
+    message: "Delete success",
+  });
+};
+
 module.exports = {
   getAll: ctrlWrapper(getAll),
   getOne: ctrlWrapper(getOne),
@@ -112,4 +125,5 @@ module.exports = {
   getFavorites: ctrlWrapper(getFavorites),
   deleteFavorite: ctrlWrapper(deleteFavorite),
   getOwner: ctrlWrapper(getOwner),
+  deleteById: ctrlWrapper(deleteById),
 };

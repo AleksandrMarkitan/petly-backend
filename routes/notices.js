@@ -24,6 +24,7 @@ router.get(
   ctrl.getOne
 );
 
+// додавання оголошень відповідно до обраної категорії
 router.post(
   "/",
   // authenticate,
@@ -57,6 +58,13 @@ router.get(
   "/owner",
   // authenticate,
   ctrl.getOwner
+);
+
+//  видалення оголошення авторизованого користувача створеного цим же користувачем
+router.delete(
+  "/:noticeId",
+  // authenticate,
+  ctrl.deleteById
 );
 
 module.exports = router;
