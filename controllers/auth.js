@@ -61,13 +61,12 @@ const login = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { name, email, birthday, phone, city, pet } = req.user;
+  const { name, email, birthday, phone, city, pets } = req.user;
   const { _id: owner } = req.user;
   const result = await Pet.find({ owner });
 
-  req.user.pet.push(...result);
-  res.json({ name, email, birthday, phone, city, pet });
-
+  req.user.pets.push(...result);
+  res.json({ name, email, birthday, phone, city, pets });
 };
 
 const logout = async (req, res) => {
