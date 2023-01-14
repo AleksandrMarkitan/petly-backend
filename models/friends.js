@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const sponsorSchema = new Schema(
+const friendsSchema = new Schema(
   {
     title: {
       type: String,
@@ -30,8 +30,8 @@ const sponsorSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-const Sponsor = model("sponsor", sponsorSchema);
+const Friend = model("friend", friendsSchema);
 
 module.exports = {
-  Sponsor,
+  Friend,
 };
