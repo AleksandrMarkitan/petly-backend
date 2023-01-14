@@ -3,6 +3,7 @@ const logger = require("morgan");
 const cors = require("cors");
 
 // const authRouter = require("./routes/auth");
+const newsRouter = require("./routes/news");
 
 const app = express();
 
@@ -14,14 +15,15 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // app.use("/auth", authRouter);
+app.use("/news", newsRouter);
 
 app.use((req, res) => {
-  res.status(404).json({ message: "Not found" });
+	res.status(404).json({ message: "Not found" });
 });
 
 app.use((err, req, res, next) => {
-  const { status = 500, message = "Server error" } = err;
-  res.status(status).json({ message });
+	const { status = 500, message = "Server error" } = err;
+	res.status(status).json({ message });
 });
 
 module.exports = app;
