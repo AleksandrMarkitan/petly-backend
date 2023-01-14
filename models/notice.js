@@ -4,9 +4,9 @@ const Joi = require("joi");
 
 const { handleMongooseError } = require("../helpers");
 
-const dateRegex = /^\d{2}\.\d{2}\d{4}$/;
+const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
 // .format("DD.MM.YYYY")
-const locationRegex = /^\[A-z]\,\[A-z]$/;
+const locationRegex = /^\[a-zA-Z]\,\[a-zA-Z]$/;
 
 // const priceRegex = /^[1-9][\d]{0,7}[.\d]{0,3}$/;
 
@@ -22,16 +22,16 @@ const noticeSchema = new Schema(
     },
     name: { type: String, minlength: 2, maxlength: 16},
     birthdate: {
-      type: Date,
+      type: String,
       match: [dateRegex, "Date must be in format 22.10.2022"],
     },
     breed: { type: String, minlength: 2, maxlength: 24 },
     location: {
       type: String,
-      match: [
-        locationRegex,
-        "Location must be in format: City,Region (example: Brovary,Kyiv)",
-      ],
+      // match: [
+      //   locationRegex,
+      //   "Location must be in format: City,Region (example: Brovary,Kyiv)",
+      // ],
       maxlength: 50,
     },
     comments: { type: String, minlength: 8, maxlength: 120, required: true },
