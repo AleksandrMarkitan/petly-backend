@@ -37,6 +37,7 @@ const userSchema = new Schema(
       type: String,
       default: "00.00.0000",
     },
+    pet: { type: Array, required: true },
     token: {
       type: String,
       default: null,

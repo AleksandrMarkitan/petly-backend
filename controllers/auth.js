@@ -6,6 +6,7 @@ const gravatar = require("gravatar");
 // const Jimp = require("jimp");
 // const { nanoid } = require("nanoid");
 const { User } = require("../models/user");
+const { Pet } = require("../models/pets");
 const { HttpError, ctrlWrapper } = require("../helpers");
 
 const { SECRET_KEY } = process.env;
@@ -59,12 +60,14 @@ const login = async (req, res) => {
   });
 };
 
-const getCurrent = (req, res) => {
-  const { name, email } = req.user;
-  res.json({
-    name,
-    email,
-  });
+const getCurrent = async (req, res) => {
+  const { name, email, birthday, phone, city, pet } = req.user;
+  const { _id: owner } = req.user;
+  const result = await Pet.find({ owner });
+
+  req.user.pet.push(...result);
+  res.json({ name, email, birthday, phone, city, pet });
+
 };
 
 const logout = async (req, res) => {
