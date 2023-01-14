@@ -2,8 +2,9 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
-// const authRouter = require("./routes/auth");
+const authRouter = require("./routes/api/auth");
 const newsRouter = require("./routes/news");
+const sponsorRouter = require("./routes/sponsors");
 
 const app = express();
 
@@ -14,8 +15,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// app.use("/auth", authRouter);
+
+app.use("/auth", authRouter);
 app.use("/news", newsRouter);
+app.use("/sponsors", sponsorRouter);
 
 app.use((req, res) => {
 	res.status(404).json({ message: "Not found" });
