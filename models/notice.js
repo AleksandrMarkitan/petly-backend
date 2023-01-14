@@ -30,7 +30,7 @@ const noticeSchema = new Schema(
       type: String,
       match: [
         locationRegex,
-        "Location must be in format: City,Region (example: Brovary,Kyiv",
+        "Location must be in format: City,Region (example: Brovary,Kyiv)",
       ],
       maxlength: 50,
     },
@@ -42,7 +42,6 @@ const noticeSchema = new Schema(
       // required: true,
     },
 
-    favorite: { type: Boolean, default: false },
     imgURL: { type: String},
     owner: { type: Schema.Types.ObjectId, ref: "user", required: true },
   },

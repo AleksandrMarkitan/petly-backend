@@ -2,7 +2,7 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
-// const authRouter = require("./routes/auth");
+const authRouter = require("./routes/auth");
 const noticesRouter = require("./routes/notices");
 
 const app = express();
@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// app.use("/api/auth", authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/notices", noticesRouter);
 
 app.use((req, res) => {

@@ -36,7 +36,7 @@ router.post(
 router.patch(
   "/:noticeId/favorites",
   // authenticate,
-  ctrl.updateFavorite
+  ctrl.addFavorite
 );
 
 // отримання оголошень авторизованого користувача доданих ним же в обрані

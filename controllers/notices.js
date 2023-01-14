@@ -7,7 +7,6 @@ const getAll = async (req, res) => {
   const { _id: owner } = req.user;
   const { page = 1, limit = 10, ...filter } = req.query;
   const skip = (page - 1) * limit;
-  // const query = !favorite ? { owner } : { owner, favorite: true };
   const data = await Notice.find({ owner, ...filter }, { skip, limit: +limit });
 
   if (data.length) {
@@ -31,9 +30,14 @@ const getOne = async (req, res) => {
 };
 
 // додавання оголошення до обраних
-const updateFavorite = async (req, res) => {
+const addFavorite = async (req, res) => {
   const { noticeId } = req.params;
   const { _id, favoriteNotices } = req.user;
+
+  const alreadyExistId = favoriteNotices.includes(noticeId);
+  if (!alreadyExistId) {
+    throw HttpError(404, "This notice already exist in favorites");
+  }
 
   const newFavoritesNotices = favoriteNotices.push(noticeId);
 
@@ -52,15 +56,13 @@ const updateFavorite = async (req, res) => {
 
 // отримання оголошень авторизованого користувача доданих ним же в обрані
 const getFavorites = async (req, res) => {
-  const { favoriteNotices } = req.user;
+  const { _id } = req.user;
 
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
-  // const query = !favorite ? { owner } : { owner, favorite: true };
-  const data = await Notice.findById(
-    { _id: favoriteNotices },
-    { skip, limit: +limit }
-  ); //узнать как найти несколько объявлений по id
+  const data = await User.findById(_id, { skip, limit: +limit }).populate(
+    "favoriteNotices"
+  ); //Проверить получим ли несколько избранный объявлений
 
   if (data.length) {
     return res.json(data);
@@ -121,7 +123,7 @@ module.exports = {
   getAll: ctrlWrapper(getAll),
   getOne: ctrlWrapper(getOne),
   add: ctrlWrapper(add),
-  updateFavorite: ctrlWrapper(updateFavorite),
+  addFavorite: ctrlWrapper(addFavorite),
   getFavorites: ctrlWrapper(getFavorites),
   deleteFavorite: ctrlWrapper(deleteFavorite),
   getOwner: ctrlWrapper(getOwner),
