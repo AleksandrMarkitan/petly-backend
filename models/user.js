@@ -37,6 +37,9 @@ const userSchema = new Schema(
       type: String,
       default: "00.00.0000",
     },
+    favoriteNotices: [
+      { type: Schema.Types.ObjectId, ref: "notice", required: true },
+    ],
     token: {
       type: String,
       default: null,
