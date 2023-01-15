@@ -1,13 +1,13 @@
 const { Notice } = require("../models/notice");
+const { User } = require("../models/user");
 
 const { HttpError, ctrlWrapper } = require("../helpers");
 
 // отримання оголошень по категоріям
 const getAll = async (req, res) => {
-  const { _id: owner } = req.user;
   const { page = 1, limit = 10, ...filter } = req.query;
   const skip = (page - 1) * limit;
-  const data = await Notice.find({ owner, ...filter }, { skip, limit: +limit });
+  const data = await Notice.find({ ...filter }, "", { skip, limit: +limit });
 
   if (data.length) {
     return res.json(data);
@@ -21,7 +21,7 @@ const getOne = async (req, res) => {
 
   const result = await Notice.findById(noticeId).populate(
     "owner",
-    "name email"
+    "name email phone"
   );
   if (!result) {
     throw HttpError(404, "Not Found");
@@ -29,21 +29,22 @@ const getOne = async (req, res) => {
   res.json(result);
 };
 
-// додавання оголошення до обраних
-const addFavorite = async (req, res) => {
+// додавання та видалення оголошення з обраних
+const updateFavorite = async (req, res) => {
   const { noticeId } = req.params;
-  const { _id, favoriteNotices } = req.user;
+  const { _id, favoriteNotices = [] } = req.user;
 
-  const alreadyExistId = favoriteNotices.includes(noticeId);
-  if (!alreadyExistId) {
-    throw HttpError(404, "This notice already exist in favorites");
+  const indexId = favoriteNotices.indexOf(noticeId);
+
+  if (indexId === -1) {
+    favoriteNotices.push(noticeId);
+  } else {
+    favoriteNotices.splice(indexId, 1);
   }
-
-  const newFavoritesNotices = favoriteNotices.push(noticeId);
 
   const result = await User.findByIdAndUpdate(
     _id,
-    { favoriteNotices: newFavoritesNotices },
+    { favoriteNotices },
     {
       new: true,
     }
@@ -51,41 +52,27 @@ const addFavorite = async (req, res) => {
   if (!result) {
     throw HttpError(404, "Not Found");
   }
-  res.json(result);
+  res.json({
+    name: result.name,
+    email: result.email,
+    favoriteNotices: result.favoriteNotices,
+  });
 };
 
 // отримання оголошень авторизованого користувача доданих ним же в обрані
 const getFavorites = async (req, res) => {
-  const { _id } = req.user;
-
+  const { favoriteNotices } = req.user;
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
-  const data = await User.findById(_id, { skip, limit: +limit }).populate(
-    "favoriteNotices"
-  ); //Проверить получим ли несколько избранный объявлений
+  const data = await Notice.find({ _id: favoriteNotices }, "", {
+    skip,
+    limit: +limit,
+  });
 
   if (data.length) {
     return res.json(data);
   }
   res.status(204).json({ message: "No Content" });
-};
-
-// видалення оголошення авторизованого користувача доданих цим же до обраних
-const deleteFavorite = async (req, res) => {
-  const { noticeId } = req.params;
-  const { favoriteNotices } = req.user;
-
-  const index = favoriteNotices.indexOf(noticeId);
-
-  favoriteNotices.splice(index, 1);
-
-  const result = await User.findByIdAndUpdate(noticeId, favoriteNotices, {
-    new: true,
-  });
-  if (!result) {
-    throw HttpError(404, "Not Found");
-  }
-  res.json(result);
 };
 
 // додавання оголошень відповідно до обраної категорії
@@ -100,7 +87,7 @@ const getOwner = async (req, res) => {
   const { _id: owner } = req.user;
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
-  const contacts = await Notice.find(owner, "", { skip, limit }).populate(
+  const contacts = await Notice.find({ owner }, "", { skip, limit }).populate(
     "owner",
     "name email"
   );
@@ -110,10 +97,29 @@ const getOwner = async (req, res) => {
 //  видалення оголошення авторизованого користувача створеного цим же користувачем
 const deleteById = async (req, res) => {
   const { noticeId } = req.params;
+  const { _id, favoriteNotices = [] } = req.user;
+
   const result = await Notice.findByIdAndRemove(noticeId);
   if (!result) {
     throw HttpError(404, "Not Found");
   }
+
+  // видаляємо id з колекції favoriteNotices користувача
+  const indexId = favoriteNotices.indexOf(noticeId);
+  if (indexId >= 0) {
+    favoriteNotices.splice(indexId, 1);
+    const data = await User.findByIdAndUpdate(
+      _id,
+      { favoriteNotices },
+      {
+        new: true,
+      }
+    );
+    if (!data) {
+      throw HttpError(404, "Not Found");
+    }
+  }
+
   res.json({
     message: "Delete success",
   });
@@ -123,9 +129,8 @@ module.exports = {
   getAll: ctrlWrapper(getAll),
   getOne: ctrlWrapper(getOne),
   add: ctrlWrapper(add),
-  addFavorite: ctrlWrapper(addFavorite),
+  updateFavorite: ctrlWrapper(updateFavorite),
   getFavorites: ctrlWrapper(getFavorites),
-  deleteFavorite: ctrlWrapper(deleteFavorite),
   getOwner: ctrlWrapper(getOwner),
   deleteById: ctrlWrapper(deleteById),
 };

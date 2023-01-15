@@ -10,6 +10,12 @@ const router = express.Router();
 // отримання оголошень по категоріям
 router.get("/", authenticate, ctrl.getAll);
 
+// отримання оголошень авторизованого користувача доданих ним же в обрані
+router.get("/favorites", authenticate, ctrl.getFavorites);
+
+//отримання оголошень авторизованого користувача створених цим же користувачем
+router.get("/owner", authenticate, ctrl.getOwner);
+
 // отримання одного оголошення
 router.get("/:noticeId", authenticate, ctrl.getOne);
 
@@ -21,17 +27,8 @@ router.post(
   ctrl.add
 );
 
-// додавання оголошення до обраних
-router.patch("/:noticeId/favorites", authenticate, ctrl.addFavorite);
-
-// отримання оголошень авторизованого користувача доданих ним же в обрані
-router.get("/favorites", authenticate, ctrl.getFavorites);
-
-// видалення оголошення авторизованого користувача доданих цим же до обраних
-router.delete("/:noticeId/favorites", authenticate, ctrl.deleteFavorite);
-
-//отримання оголошень авторизованого користувача створених цим же користувачем
-router.get("/owner", authenticate, ctrl.getOwner);
+// додавання та видалення оголошення з обраних
+router.patch("/:noticeId/favorites", authenticate, ctrl.updateFavorite);
 
 //  видалення оголошення авторизованого користувача створеного цим же користувачем
 router.delete("/:noticeId", authenticate, ctrl.deleteById);

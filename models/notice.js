@@ -6,7 +6,7 @@ const { handleMongooseError } = require("../helpers");
 
 const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
 // .format("DD.MM.YYYY")
-const locationRegex = /^\[a-zA-Z]\,\[a-zA-Z]$/;
+const locationRegex = /^\s*(?:\w+\s*,\s*)(?:\w+\s*)$/;
 
 // const priceRegex = /^[1-9][\d]{0,7}[.\d]{0,3}$/;
 
@@ -28,10 +28,10 @@ const noticeSchema = new Schema(
     breed: { type: String, minlength: 2, maxlength: 24 },
     location: {
       type: String,
-      // match: [
-      //   locationRegex,
-      //   "Location must be in format: City,Region (example: Brovary,Kyiv)",
-      // ],
+      match: [
+        locationRegex,
+        "Location must be in format: City,Region (example: Brovary,Kyiv)",
+      ],
       maxlength: 50,
     },
     comments: { type: String, minlength: 8, maxlength: 120, required: true },
@@ -55,12 +55,12 @@ noticeSchema.post("save", handleMongooseError);
 
 // -------Update Notice Favorite Shema-----------
 
-const updateNoticeFavoriteShema = Joi.object({
-  favorite: Joi.boolean(),
-});
+// const updateNoticeFavoriteShema = Joi.object({
+//   favorite: Joi.boolean(),
+// });
 
 const schemas = {
-  updateNoticeFavoriteShema,
+  // updateNoticeFavoriteShema,
 };
 
 const Notice = model("notice", noticeSchema);
