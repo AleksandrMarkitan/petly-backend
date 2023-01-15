@@ -69,6 +69,41 @@ const getCurrent = async (req, res) => {
   res.json({ name, email, birthday, phone, city, pets });
 };
 
+// const updateUserData = async (req, res) => {
+//   const { _id } = req.user;
+//   console.log("updateUserData:", _id);
+//   const result = await User.findByIdAndUpdate(_id, req.body, {
+//     new: true,
+//   });
+
+//   console.log("res:", result);
+
+//   if (!result) {
+//     console.log("Error:", result);
+
+//     throw HttpError(404);
+//   }
+//   res.json(result);
+// };
+
+// const updateAvatar = async (req, res) => {
+//   const { _id } = req.user;
+//   const { path: tempUpload, originalname } = req.file;
+//   const filename = `${_id}_${originalname}`;
+//   const resultUpload = path.join(avatarsDir, filename);
+//   Jimp.read(tempUpload, (err, img) => {
+//     if (err) throw err;
+//     img.resize(250, 250).write(resultUpload);
+//   });
+//   await fs.unlink(tempUpload);
+//   const avatarURL = path.join("avatars", filename);
+//   await User.findByIdAndUpdate(_id, { avatarURL });
+
+//   res.json({
+//     avatarURL,
+//   });
+// };
+
 const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
@@ -81,5 +116,6 @@ module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
+  //   updateUserData: ctrlWrapper(updateUserData),
   logout: ctrlWrapper(logout),
 };
