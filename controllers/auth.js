@@ -1,11 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
-// const fs = require("fs/promises");
-// const path = require("path");
-// const Jimp = require("jimp");
-// const { nanoid } = require("nanoid");
-const { User } = require("../models/user");
+const fs = require("fs/promises");
+const path = require("path");
+const Jimp = require("jimp");
+const { User, schemas } = require("../models/user");
 const { Pet } = require("../models/pets");
 const { HttpError, ctrlWrapper } = require("../helpers");
 
@@ -61,13 +60,54 @@ const login = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { name, email, birthday, phone, city, pet } = req.user;
+  const { name, email, birthday, phone, city, pets } = req.user;
   const { _id: owner } = req.user;
   const result = await Pet.find({ owner });
 
-  req.user.pet.push(...result);
-  res.json({ name, email, birthday, phone, city, pet });
+  req.user.pets.push(...result);
+  res.json({ name, email, birthday, phone, city, pets });
+};
 
+const avatarsDir = path.join(__dirname, "../", "public", "avatars");
+
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path: tempUpload, originalname } = req.file;
+  const filename = `${_id}_${originalname}`;
+  const resultUpload = path.join(avatarsDir, filename);
+  Jimp.read(tempUpload, (err, img) => {
+    if (err) throw err;
+    img.resize(233, 233).write(resultUpload);
+  });
+  await fs.unlink(tempUpload);
+  const avatarURL = path.join("avatars", filename);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  res.json({
+    avatarURL,
+  });
+};
+
+const updateUserData = async (req, res) => {
+  if (req.file) {
+    updateAvatar(req, res);
+    return;
+  }
+
+  const { error } = schemas.updateSchema.validate(req.body);
+  if (error) {
+    throw HttpError(400, error.message);
+  }
+
+  const { _id } = req.user;
+  const result = await User.findByIdAndUpdate(_id, req.body, {
+    new: true,
+  });
+
+  if (!result) {
+    throw HttpError(404);
+  }
+  res.json(result);
 };
 
 const logout = async (req, res) => {
@@ -82,5 +122,6 @@ module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
+  updateUserData: ctrlWrapper(updateUserData),
   logout: ctrlWrapper(logout),
 };

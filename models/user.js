@@ -37,13 +37,12 @@ const userSchema = new Schema(
       type: String,
       default: "00.00.0000",
     },
-    pet: { type: Array, required: true },
+    pets: { type: Array, required: true },
     favoriteNotices: {
       type: [{ type: Schema.Types.ObjectId }],
       ref: "notice",
-      default:[]
+      default: [],
     },
-
     token: {
       type: String,
       default: null,
@@ -67,9 +66,18 @@ const loginSchema = Joi.object({
   password: Joi.string().min(7).required(),
 });
 
+const updateSchema = Joi.object({
+  name: Joi.string(),
+  email: Joi.string().pattern(emailRegexp),
+  city: Joi.string(),
+  birthday: Joi.string(),
+  phone: Joi.string(),
+}).min(1);
+
 const schemas = {
   registerSchema,
   loginSchema,
+  updateSchema,
 };
 
 const User = model("user", userSchema);
