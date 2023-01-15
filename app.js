@@ -7,6 +7,7 @@ const authRouter = require("./routes/auth");
 const petsRouter = require("./routes/pets");
 const newsRouter = require("./routes/news");
 const friendsRouter = require("./routes/friends");
+const noticesRouter = require("./routes/notices");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/pets", petsRouter);
 app.use("/api/v1/news", newsRouter);
 app.use("/api/v1/friends", friendsRouter);
+app.use("/api/v1/notices", noticesRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
