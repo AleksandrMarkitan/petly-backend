@@ -2,10 +2,10 @@ const { Pet } = require("../models/pets");
 
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-const gravatar = require("gravatar");
+//const gravatar = require("gravatar");
 const path = require("path");
 const fs = require("fs/promises");
-const Jimp = require("jimp");
+//const Jimp = require("jimp");
 
 const { nanoid } = require("nanoid");
 
@@ -53,11 +53,3 @@ module.exports = {
   add: ctrlWrapper(add),
   deleteById: ctrlWrapper(deleteById),
 };
-
-//   await cloudinary.v2.uploader.upload(
-//     "https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-//     { public_id: "olympic_flag" },
-//     function (error, result) {
-//       console.log(result);
-//     }
-//   );
