@@ -22,7 +22,10 @@ const petSchema = new Schema(
       maxlength: 16,
       required: true,
     },
-    avatarUrl: { type: String },
+    avatarURL: {
+      type: String,
+      required: true,
+    },
     comments: {
       type: String,
       minlength: 8,
@@ -43,6 +46,7 @@ const addSchema = Joi.object({
   name: Joi.string().min(2).max(16).required(),
   date: Joi.date(), // а может регулярное віражение надо
   breed: Joi.string().min(2).max(16),
+  avatarURL: Joi.string(),
   comments: Joi.string().min(8).max(120),
 });
 
