@@ -23,7 +23,7 @@ router.get("/:noticeId", authenticate, ctrl.getOne);
 router.post(
   "/",
   authenticate,
-  // validateBody(schemas.addSchema),
+  validateBody(schemas.newNoticeSchema),
   ctrl.add
 );
 
