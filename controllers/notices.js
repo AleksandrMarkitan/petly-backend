@@ -1,7 +1,13 @@
 const { Notice } = require("../models/notice");
 const { User } = require("../models/user");
+const {cloudinary} = require("../helpers");
+
+const Jimp = require("jimp");
 
 const { HttpError, ctrlWrapper } = require("../helpers");
+
+// const dafaultImgURL =
+//   "http://res.cloudinary.com/digml0rat/image/upload/v1673906206/Fullstack%20Group%20Project/home-pets_hywfgq.png";
 
 // отримання оголошень по категоріям
 const getAll = async (req, res) => {
@@ -78,7 +84,28 @@ const getFavorites = async (req, res) => {
 // додавання оголошень відповідно до обраної категорії
 const add = async (req, res) => {
   const { _id: owner } = req.user;
-  const result = await Notice.create({ ...req.body, owner });
+
+  // додаємо зображення
+  const { path: tempUpload} = req.file;
+  const resizeAvatar = await Jimp.read(tempUpload);
+  resizeAvatar.resize(250, 250).write(tempUpload);
+
+  const options = {
+    use_filename: true,
+    unique_filename: true,
+    overwrite: true,
+  };
+  const upload = await cloudinary.uploader.upload(tempUpload,options);
+  
+  // у кінці видаляємо з зображення з temp(зробити!)
+  // Зробити вимогу якщо нема зображення, то завантажуємо дефолтне
+  // Зробити оптимізацію зображення у клоуденарі
+
+  const result = await Notice.create({
+    ...req.body,
+    owner,
+    imgURL: upload.secure_url,
+  });
   res.status(201).json(result);
 };
 

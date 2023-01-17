@@ -1,4 +1,4 @@
-const { validateBody, authenticate } = require("../middlewares");
+const { validateBody, authenticate, upload } = require("../middlewares");
 
 const { schemas } = require("../models/notice");
 
@@ -23,7 +23,8 @@ router.get("/:noticeId", authenticate, ctrl.getOne);
 router.post(
   "/",
   authenticate,
-  // validateBody(schemas.addSchema),
+  upload.single("petImg"),
+  validateBody(schemas.newNoticeSchema),
   ctrl.add
 );
 
