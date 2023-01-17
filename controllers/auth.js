@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const fs = require("fs/promises");
 const path = require("path");
+const { cloudinary } = require("../helpers");
+
 const Jimp = require("jimp");
 const { User, schemas } = require("../models/user");
 const { Pet } = require("../models/pets");
@@ -68,23 +70,27 @@ const getCurrent = async (req, res) => {
   res.json({ name, email, birthday, phone, city, pets });
 };
 
-const avatarsDir = path.join(__dirname, "../", "public", "avatars");
-
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
-  const { path: tempUpload, originalname } = req.file;
-  const filename = `${_id}_${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
-  Jimp.read(tempUpload, (err, img) => {
-    if (err) throw err;
-    img.resize(233, 233).write(resultUpload);
-  });
+  const { path: tempUpload } = req.file;
+
+  const options = {
+    use_filename: true,
+    unique_filename: true,
+    overwrite: true,
+    transformation: [
+      { width: 233, height: 233, gravity: "face", crop: "thumb" },
+    ],
+  };
+
+  const upload = await cloudinary.uploader.upload(tempUpload, options);
+
   await fs.unlink(tempUpload);
-  const avatarURL = path.join("avatars", filename);
-  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  await User.findByIdAndUpdate(_id, { avatarURL: upload.secure_url });
 
   res.json({
-    avatarURL,
+    avatarURL: upload.secure_url,
   });
 };
 
