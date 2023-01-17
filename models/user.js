@@ -7,7 +7,7 @@ const emailRegexp =
   /^[^-]{1}[A-Za-z0-9._-]{2,}@[^-]{1}[A-Za-z0-9.-]{2,}\.[A-Za-z]{2,4}$/;
 const phoneRegexp = /^\+\d{12}$/;
 const passwordRegexp = /^[A-Za-z0-9!?#$%^&_\-\*]{7,32}$/;
-const cityRegexp = /^([^0-9][A-Za-z-\s]{2,})*, ([^0-9][A-Za-z-\s]{2,})*/;
+const cityRegexp = /^([^0-9][A-Za-z-\s]{2,})*,([^0-9][A-Za-z-\s]{2,})*/;
 const birthdayRegexp =
   /^(?:0[1-9]|[12][0-9]|3[01])[.](?:0[1-9]|1[012])[.](?:19\d{2}|20[01][0-9]|2020)\b$/;
 
