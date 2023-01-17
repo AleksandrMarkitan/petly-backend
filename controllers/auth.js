@@ -2,10 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const fs = require("fs/promises");
-const path = require("path");
 const { cloudinary } = require("../helpers");
-
-const Jimp = require("jimp");
 const { User, schemas } = require("../models/user");
 const { Pet } = require("../models/pets");
 const { HttpError, ctrlWrapper } = require("../helpers");
