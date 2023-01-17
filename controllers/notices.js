@@ -1,8 +1,6 @@
 const { Notice } = require("../models/notice");
 const { User } = require("../models/user");
-const {cloudinary} = require("../helpers");
-
-const Jimp = require("jimp");
+const { uploadImg } = require("../helpers");
 
 const { HttpError, ctrlWrapper } = require("../helpers");
 
@@ -84,27 +82,13 @@ const getFavorites = async (req, res) => {
 // додавання оголошень відповідно до обраної категорії
 const add = async (req, res) => {
   const { _id: owner } = req.user;
-
   // додаємо зображення
-  const { path: tempUpload} = req.file;
-  const resizeAvatar = await Jimp.read(tempUpload);
-  resizeAvatar.resize(250, 250).write(tempUpload);
-
-  const options = {
-    use_filename: true,
-    unique_filename: true,
-    overwrite: true,
-  };
-  const upload = await cloudinary.uploader.upload(tempUpload,options);
-  
-  // у кінці видаляємо з зображення з temp(зробити!)
-  // Зробити вимогу якщо нема зображення, то завантажуємо дефолтне
-  // Зробити оптимізацію зображення у клоуденарі
+  const imgToSend = await uploadImg(req.file?.path);  
 
   const result = await Notice.create({
     ...req.body,
     owner,
-    imgURL: upload.secure_url,
+    imgURL: imgToSend,
   });
   res.status(201).json(result);
 };
