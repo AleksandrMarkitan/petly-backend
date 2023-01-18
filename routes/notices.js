@@ -8,7 +8,7 @@ const express = require("express");
 const router = express.Router();
 
 // отримання оголошень по категоріям
-router.get("/", authenticate, ctrl.getAll);
+router.get("/", ctrl.getAll);
 
 // отримання оголошень авторизованого користувача доданих ним же в обрані
 router.get("/favorites", authenticate, ctrl.getFavorites);
@@ -17,7 +17,7 @@ router.get("/favorites", authenticate, ctrl.getFavorites);
 router.get("/owner", authenticate, ctrl.getOwner);
 
 // отримання одного оголошення
-router.get("/:noticeId", authenticate, ctrl.getOne);
+router.get("/:noticeId", ctrl.getOne);
 
 // додавання оголошень відповідно до обраної категорії
 router.post(
