@@ -9,15 +9,6 @@ router.post("/register", validateBody(schemas.registerSchema), ctrl.register);
 
 router.post("/login", validateBody(schemas.loginSchema), ctrl.login);
 
-router.get("/current", authenticate, ctrl.getCurrent);
-
-router.patch(
-  "/update",
-  authenticate,
-  upload.single("avatar"),
-  ctrl.updateUserData
-);
-
 router.get("/logout", authenticate, ctrl.logout);
 
 module.exports = router;
