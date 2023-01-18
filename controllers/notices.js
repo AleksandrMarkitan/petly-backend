@@ -4,9 +4,6 @@ const { uploadImg } = require("../helpers");
 
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-// const dafaultImgURL =
-//   "http://res.cloudinary.com/digml0rat/image/upload/v1673906206/Fullstack%20Group%20Project/home-pets_hywfgq.png";
-
 // отримання оголошень по категоріям
 const getAll = async (req, res) => {
   const { page = 1, limit = 10, ...filter } = req.query;
