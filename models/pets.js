@@ -44,7 +44,7 @@ petSchema.post("save", handleMongooseError);
 
 const addSchema = Joi.object({
   name: Joi.string().min(2).max(16).required(),
-  date: Joi.date(), // а может регулярное віражение надо
+  date: Joi.date(), // а может регулярное выражение надо
   breed: Joi.string().min(2).max(16),
   avatarURL: Joi.string(),
   comments: Joi.string().min(8).max(120),
