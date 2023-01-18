@@ -1,13 +1,30 @@
 const { HttpError, ctrlWrapper, uploadImgPet } = require("../helpers");
 const { Pet } = require("../models/pets");
 
+const dafaultImgURL =
+  "https://res.cloudinary.com/dgne23at6/image/upload/v1674052318/f64cacccea6511bba2ae40b5383e3e47_ajipj3.jpg";
+const transformationSmall = [
+  { width: 161, height: 161, gravity: "auto", crop: "fill" },
+];
+const transformationLage = [{ gravity: "auto", crop: "fill" }];
+
 const add = async (req, res) => {
   const { _id: owner } = req.user;
-  const avatarPet = await uploadImgPet(req.file.path);
+  const avatarPetSmall = await uploadImgPet(
+    req.file.path,
+    dafaultImgURL,
+    transformationSmall
+  );
+  const avatarPetLage = await uploadImgPet(
+    req.file.path,
+    dafaultImgURL,
+    transformationLage
+  );
   const result = await Pet.create({
     ...req.body,
     owner,
-    avatarURL: avatarPet,
+    avatarURL_small: avatarPetSmall,
+    avatarURL_lage: avatarPetLage,
   });
   res.status(201).json(result);
 };
