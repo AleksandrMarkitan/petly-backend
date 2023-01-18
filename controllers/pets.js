@@ -24,15 +24,15 @@ const add = async (req, res) => {
   const avatarURL = path.join("public", "avatarsPet", filename);
 
   //---------convert avatar to 250-250--------
-  //   await Jimp.read(resultUpload)
-  //     .then((lenna) => {
-  //       return lenna
-  //         .resize(250, 250) // resize
-  //         .writeAsync(resultUpload); // save
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
+  await Jimp.read(resultUpload)
+    .then((lenna) => {
+      return lenna
+        .resize(250, 250) // resize
+        .writeAsync(resultUpload); // save
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   //-----------------
   const result = await Pet.create({ ...req.body, owner, avatarURL });
   res.status(201).json(result);
