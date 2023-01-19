@@ -1,8 +1,8 @@
-const fs = require("fs/promises");
-const { cloudinary } = require("../helpers");
+const gravatar = require("gravatar");
+
 const { User, schemas } = require("../models/user");
 const { Pet } = require("../models/pets");
-const { HttpError, ctrlWrapper } = require("../helpers");
+const { HttpError, ctrlWrapper, uploadImg } = require("../helpers");
 
 const getCurrent = async (req, res) => {
   const { name, email, birthday, phone, city, avatarURL, pets } = req.user;
@@ -15,25 +15,21 @@ const getCurrent = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
-  const { path: tempUpload } = req.file;
 
-  const options = {
-    use_filename: true,
-    unique_filename: true,
-    overwrite: true,
-    transformation: [
-      { width: 233, height: 233, gravity: "face", crop: "thumb" },
-    ],
-  };
+  const dafaultImgURL = gravatar.url(_id);
+  const transformation = [
+    { width: 233, height: 233, gravity: "face", crop: "thumb" },
+  ];
+  const newAvatar = await uploadImg(
+    req.file?.path,
+    dafaultImgURL,
+    transformation
+  );
 
-  const upload = await cloudinary.uploader.upload(tempUpload, options);
-
-  await fs.unlink(tempUpload);
-
-  await User.findByIdAndUpdate(_id, { avatarURL: upload.secure_url });
+  await User.findByIdAndUpdate(_id, { avatarURL: newAvatar });
 
   res.json({
-    avatarURL: upload.secure_url,
+    avatarURL: newAvatar,
   });
 };
 

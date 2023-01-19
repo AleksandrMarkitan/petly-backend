@@ -2,8 +2,7 @@ const HttpError = require("./HttpError");
 const ctrlWrapper = require("./ctrlWrapper");
 const handleMongooseError = require("./handleMongooseError");
 const cloudinary = require("./cloudinary");
-const uploadImg = require("./cloudUploadFunc");
-const uploadImgPet = require("./cloudUploadPet");
+const uploadImg = require("./cloudUpload");
 
 module.exports = {
   HttpError,
@@ -11,5 +10,4 @@ module.exports = {
   handleMongooseError,
   cloudinary,
   uploadImg,
-  uploadImgPet,
 };

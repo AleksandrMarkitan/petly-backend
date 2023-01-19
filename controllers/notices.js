@@ -77,10 +77,20 @@ const getFavorites = async (req, res) => {
 };
 
 // додавання оголошень відповідно до обраної категорії
+
 const add = async (req, res) => {
   const { _id: owner } = req.user;
   // додаємо зображення
-  const imgToSend = await uploadImg(req.file?.path);  
+  const dafaultImgURL =
+    "http://res.cloudinary.com/digml0rat/image/upload/v1673906206/Fullstack%20Group%20Project/home-pets_hywfgq.png";
+  const transformation = [
+    { width: 336, height: 336, gravity: "auto", crop: "fill" },
+  ];
+  const imgToSend = await uploadImg(
+    req.file?.path,
+    dafaultImgURL,
+    transformation
+  );
 
   const result = await Notice.create({
     ...req.body,
@@ -90,7 +100,7 @@ const add = async (req, res) => {
   res.status(201).json(result);
 };
 
-//отримання оголошень авторизованого користувача створених цим же користувачем
+// отримання оголошень авторизованого користувача створених цим же користувачем
 const getOwner = async (req, res) => {
   const { _id: owner } = req.user;
   const { page = 1, limit = 10 } = req.query;
