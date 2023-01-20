@@ -10,7 +10,7 @@ const add = async (req, res) => {
     { width: 240, height: 240, gravity: "auto", crop: "fill" },
   ];
   const avatarPet = await uploadImg(
-    req.file.path,
+    req.file?.path,
     dafaultImgURL,
     transformation
   );
