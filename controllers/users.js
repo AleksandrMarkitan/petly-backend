@@ -21,13 +21,13 @@ const updateAvatar = async (req, res) => {
     { width: 233, height: 233, gravity: "face", crop: "thumb" },
   ];
   const newAvatar = await uploadImg(
-    req.file?.path,
+    req.file.path,
     dafaultImgURL,
     transformation
   );
-
+ 
   await User.findByIdAndUpdate(_id, { avatarURL: newAvatar });
-
+  
   res.json({
     avatarURL: newAvatar,
   });
@@ -48,6 +48,11 @@ const updateUserData = async (req, res) => {
   const result = await User.findByIdAndUpdate(_id, req.body, {
     new: true,
   });
+
+  const { _id: owner } = req.user;
+  const result1 = await Pet.find({ owner });
+
+  result.pets.push(...result1);
 
   if (!result) {
     throw HttpError(404);
