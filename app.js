@@ -9,6 +9,7 @@ const petsRouter = require("./routes/pets");
 const newsRouter = require("./routes/news");
 const friendsRouter = require("./routes/friends");
 const noticesRouter = require("./routes/notices");
+const citiesRouter = require("./routes/cities");
 
 const app = express();
 
@@ -26,14 +27,15 @@ app.use("/api/v1/pets", petsRouter);
 app.use("/api/v1/news", newsRouter);
 app.use("/api/v1/friends", friendsRouter);
 app.use("/api/v1/notices", noticesRouter);
+app.use("/api/v1/cities", citiesRouter);
 
 app.use((req, res) => {
-  res.status(404).json({ message: "Not found" });
+	res.status(404).json({ message: "Not found" });
 });
 
 app.use((err, req, res, next) => {
-  const { status = 500, message = "Server error" } = err;
-  res.status(status).json({ message });
+	const { status = 500, message = "Server error" } = err;
+	res.status(status).json({ message });
 });
 
 module.exports = app;
