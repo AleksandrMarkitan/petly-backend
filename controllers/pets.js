@@ -7,7 +7,7 @@ const add = async (req, res) => {
   const dafaultImgURL =
     "https://res.cloudinary.com/dgne23at6/image/upload/v1674052318/f64cacccea6511bba2ae40b5383e3e47_ajipj3.jpg";
   const transformation = [
-    { width: 161, height: 161, gravity: "auto", crop: "fill" },
+    { width: 240, height: 240, gravity: "auto", crop: "fill" },
   ];
   const avatarPet = await uploadImg(
     req.file.path,
