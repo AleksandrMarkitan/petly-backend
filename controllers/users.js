@@ -5,12 +5,30 @@ const { Pet } = require("../models/pets");
 const { HttpError, ctrlWrapper, uploadImg } = require("../helpers");
 
 const getCurrent = async (req, res) => {
-  const { name, email, birthday, phone, city, avatarURL, pets } = req.user;
+  const {
+    name,
+    email,
+    birthday,
+    phone,
+    city,
+    avatarURL,
+    pets,
+    favoriteNotices,
+  } = req.user;
   const { _id: owner } = req.user;
   const result = await Pet.find({ owner });
 
   req.user.pets.push(...result);
-  res.json({ name, email, birthday, phone, city, avatarURL, pets });
+  res.json({
+    name,
+    email,
+    birthday,
+    phone,
+    city,
+    avatarURL,
+    pets,
+    favoriteNotices,
+  });
 };
 
 const updateAvatar = async (req, res) => {
@@ -25,9 +43,9 @@ const updateAvatar = async (req, res) => {
     dafaultImgURL,
     transformation
   );
- 
+
   await User.findByIdAndUpdate(_id, { avatarURL: newAvatar });
-  
+
   res.json({
     avatarURL: newAvatar,
   });
