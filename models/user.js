@@ -45,7 +45,7 @@ const userSchema = new Schema(
     },
     birthday: {
       type: String,
-      default: "01.01.1970",
+      default: "01.01.2000",
       match: birthdayRegexp,
     },
     pets: { type: Array, required: true },
