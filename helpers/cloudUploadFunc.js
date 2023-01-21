@@ -23,22 +23,22 @@ const optionsPet = {
   use_filename: true,
   unique_filename: true,
   overwrite: true,
-  transformation: [{ width: 161, height: 161, gravity: "auto", crop: "fill" }],
+  transformation: [{ width: 240, height: 240, gravity: "auto", crop: "fill" }],
 };
 
-// завантаження зображення у хмару 
+// завантаження зображення у хмару
 // оберить тип опцій для передачі другим параметром uploadType "avatar" чи "pet"
 
 const uploadImg = async (tempUpload, uploadType) => {
   let options = null;
-  if(uploadType === "avatar"){
+  if (uploadType === "avatar") {
     options = optionsAvatar;
-  } else if(uploadType==="pet"){
-    options=optionsPet;
+  } else if (uploadType === "pet") {
+    options = optionsPet;
   } else {
-    options=optionsNotices;
+    options = optionsNotices;
   }
-  
+
   if (tempUpload) {
     const upload = await cloudinary.uploader.upload(tempUpload, options);
 

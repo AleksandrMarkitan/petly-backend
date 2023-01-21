@@ -9,7 +9,7 @@ router.get("/current", authenticate, ctrl.getCurrent);
 router.patch(
   "/update",
   authenticate,
-  upload.single("avatar"),
+  upload.single("avatarURL"),
   ctrl.updateUserData
 );
 
