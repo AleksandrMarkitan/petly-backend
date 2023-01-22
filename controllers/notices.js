@@ -4,16 +4,32 @@ const { uploadImg } = require("../helpers");
 
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-// отримання оголошень по категоріям
+// отримання оголошень по категоріям та пошуку оголошення по ключовому слову в заголовку
 const getAll = async (req, res) => {
-  const { page = 1, limit = 10, ...filter } = req.query;
+  const { page = 1, limit = 8, qwery = "", ...filter } = req.query;
   const skip = (page - 1) * limit;
-  const data = await Notice.find({ ...filter }, "", { skip, limit: +limit });
+  if (qwery === "") {
+    const data = await Notice.find({ ...filter }, "", { skip, limit: +limit });
 
-  if (data.length) {
-    return res.json(data);
+    if (data.length) {
+      return res.json(data);
+    }
+    res.status(204).json({ message: "No Content" });
+  } else {
+    const data = await Notice.find(
+      { title: { $regex: qwery, $options: "i" }, ...filter },
+      "",
+      {
+        skip,
+        limit: +limit,
+      }
+    );
+
+    if (data.length) {
+      return res.json(data);
+    }
+    res.status(204).json({ message: "No Content" });
   }
-  res.status(204).json({ message: "No Content" });
 };
 
 // отримання одного оголошення
@@ -63,7 +79,7 @@ const updateFavorite = async (req, res) => {
 // отримання оголошень авторизованого користувача доданих ним же в обрані
 const getFavorites = async (req, res) => {
   const { favoriteNotices } = req.user;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 8 } = req.query;
   const skip = (page - 1) * limit;
   const data = await Notice.find({ _id: favoriteNotices }, "", {
     skip,
@@ -103,7 +119,7 @@ const add = async (req, res) => {
 // отримання оголошень авторизованого користувача створених цим же користувачем
 const getOwner = async (req, res) => {
   const { _id: owner } = req.user;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 8 } = req.query;
   const skip = (page - 1) * limit;
   const contacts = await Notice.find({ owner }, "", { skip, limit }).populate(
     "owner",
@@ -134,7 +150,7 @@ const deleteById = async (req, res) => {
       }
     );
     if (!data) {
-      throw HttpError(404, "Not Found");
+      throw HttpError(404, "Not Found in User favorite collection");
     }
   }
 
