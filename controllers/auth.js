@@ -64,14 +64,16 @@ const login = async (req, res) => {
 
   res.json({
     token,
-    name,
-    email,
-    birthday,
-    phone,
-    city,
-    avatarURL,
-    pets,
-    favoriteNotices,
+    user: {
+      name,
+      email,
+      birthday,
+      phone,
+      city,
+      avatarURL,
+      pets,
+      favoriteNotices,
+    },
   });
 };
 
