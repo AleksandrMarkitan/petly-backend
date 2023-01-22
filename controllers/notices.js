@@ -4,16 +4,32 @@ const { uploadImg } = require("../helpers");
 
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-// отримання оголошень по категоріям
+// отримання оголошень по категоріям та пошуку оголошення по ключовому слову в заголовку
 const getAll = async (req, res) => {
-  const { page = 1, limit = 8, ...filter } = req.query;
+  const { page = 1, limit = 8, qwery = "", ...filter } = req.query;
   const skip = (page - 1) * limit;
-  const data = await Notice.find({ ...filter }, "", { skip, limit: +limit });
+  if (qwery === "") {
+    const data = await Notice.find({ ...filter }, "", { skip, limit: +limit });
 
-  if (data.length) {
-    return res.json(data);
+    if (data.length) {
+      return res.json(data);
+    }
+    res.status(204).json({ message: "No Content" });
+  } else {
+    const data = await Notice.find(
+      { title: { $regex: qwery, $options: "i" }, ...filter },
+      "",
+      {
+        skip,
+        limit: +limit,
+      }
+    );
+
+    if (data.length) {
+      return res.json(data);
+    }
+    res.status(204).json({ message: "No Content" });
   }
-  res.status(204).json({ message: "No Content" });
 };
 
 // отримання одного оголошення
