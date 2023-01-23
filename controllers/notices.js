@@ -76,20 +76,33 @@ const updateFavorite = async (req, res) => {
   });
 };
 
-// отримання оголошень авторизованого користувача доданих ним же в обрані
+// отримання оголошень авторизованого користувача доданих ним же в обрані та пошуку оголошення по ключовому слову в заголовку
 const getFavorites = async (req, res) => {
   const { favoriteNotices } = req.user;
-  const { page = 1, limit = 8 } = req.query;
+  const { qwery = "", page = 1, limit = 8 } = req.query;
   const skip = (page - 1) * limit;
-  const data = await Notice.find({ _id: favoriteNotices }, "", {
-    skip,
-    limit: +limit,
-  });
+  if (qwery === "") {
+    const data = await Notice.find({ _id: favoriteNotices }, "", {
+      skip,
+      limit: +limit,
+    });
 
-  if (data.length) {
-    return res.json(data);
+    if (data.length) {
+      return res.json(data);
+    }
+    res.status(204).json({ message: "No Content" });
+  }else{
+    const data = await Notice.find({ _id: favoriteNotices }, "", {
+      skip,
+      limit: +limit,
+    });
+
+    if (data.length) {
+      const result = data.filter(notice=>notice.title.toLowerCase().includes(qwery.toLowerCase()))
+      return res.json(result);
+    }
+    res.status(204).json({ message: "No Content" });
   }
-  res.status(204).json({ message: "No Content" });
 };
 
 // додавання оголошень відповідно до обраної категорії
@@ -116,16 +129,25 @@ const add = async (req, res) => {
   res.status(201).json(result);
 };
 
-// отримання оголошень авторизованого користувача створених цим же користувачем
+// отримання оголошень авторизованого користувача створених цим же користувачем та пошуку оголошення по ключовому слову в заголовку
 const getOwner = async (req, res) => {
   const { _id: owner } = req.user;
-  const { page = 1, limit = 8 } = req.query;
+  const { qwery = "", page = 1, limit = 8 } = req.query;
   const skip = (page - 1) * limit;
-  const contacts = await Notice.find({ owner }, "", { skip, limit }).populate(
-    "owner",
-    "name email"
-  );
-  res.json(contacts);
+  if (qwery === "") {
+    const contacts = await Notice.find({ owner }, "", { skip, limit }).populate(
+      "owner",
+      "name email"
+    );
+    res.json(contacts);
+  } else {
+    const contacts = await Notice.find(
+      { owner, title: { $regex: qwery, $options: "i" } },
+      "",
+      { skip, limit }
+    ).populate("owner", "name email");
+    res.json(contacts);
+  }
 };
 
 //  видалення оголошення авторизованого користувача створеного цим же користувачем
