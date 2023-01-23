@@ -20,7 +20,7 @@ const noticeSchema = new Schema(
     },
     name: { type: String, minlength: 2, maxlength: 16 },
     birthdate: {
-      type: String,
+      type: Date,
       match: [DATE_REGEXP, "Date must be in format 22.10.2022"],
     },
     breed: { type: String, minlength: 0, maxlength: 24 },
