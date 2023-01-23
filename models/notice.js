@@ -5,7 +5,6 @@ const Joi = require("joi");
 const { handleMongooseError } = require("../helpers");
 
 const DATE_REGEXP = /^\d{2}\.\d{2}\.\d{4}$/;
-// .format("DD.MM.YYYY")
 const LOCALTION_REGEXP = /^\s*(?:\w+\s*,\s*)(?:\w+\s*)$/;
 const PRICE_REGEXP = /^[1-9][\d]{0,7}[.\d]{0,3}$/;
 
@@ -24,7 +23,7 @@ const noticeSchema = new Schema(
       type: String,
       match: [DATE_REGEXP, "Date must be in format 22.10.2022"],
     },
-    breed: { type: String, minlength: 2, maxlength: 24 },
+    breed: { type: String, minlength: 0, maxlength: 24 },
     sex: {
       type: String,
       enum: ["male", "female"],
@@ -40,7 +39,7 @@ const noticeSchema = new Schema(
     comments: { type: String, minlength: 8, maxlength: 120, required: true },
     price: {
       type: Number,
-      match: [PRICE_REGEXP],
+      match: [PRICE_REGEXP, "Must be at least 1 no more than 7 digits"],
       // min: [1, "Must be at least 1, got {VALUE}"],
       // max: [10000000, "Should be no more than 10000000, got {VALUE}"],
     },
@@ -59,13 +58,13 @@ const newNoticeSchema = Joi.object({
   category: Joi.string()
     .valid("lost-found", "in-good-hands", "sell")
     .required(),
-  name: Joi.string().min(2).max(16).required(),
+  name: Joi.string().min(2).max(16),
   birthdate: Joi.date().greater("1-1-1990").less("now"),
-  breed: Joi.string().min(2).max(24),
+  breed: Joi.string().min(0).max(24),
   sex: Joi.string().valid("male", "female"),
   location: Joi.string().pattern(LOCALTION_REGEXP).max(50),
   comments: Joi.string().min(8).max(120).required(),
-  price: Joi.number().integer().min(1).max(10000000),
+  price: Joi.number().integer().min(1).max(1000000),
   favorite: Joi.boolean(),
 });
 
