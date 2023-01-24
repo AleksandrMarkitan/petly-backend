@@ -23,6 +23,11 @@ const noticeSchema = new Schema(
 			type: String,
 			match: [DATE_REGEXP, "Date must be in format 22.10.2022"],
 		},
+		// birthdate: {
+		// 	type: Date,
+		// min: '1990-01-01',
+		// max: Date.now(),
+		// },
 		breed: { type: String, minlength: 0, maxlength: 24 },
 		sex: {
 			type: String,
@@ -60,6 +65,7 @@ const newNoticeSchema = Joi.object({
 		.required(),
 	name: Joi.string().min(2).max(16),
 	birthdate: Joi.string(),
+	// birthdate: Joi.date().greater("1-1-1990").less("now"),
 	breed: Joi.string().min(2).max(24),
 	sex: Joi.string().valid("male", "female"),
 	location: Joi.string().pattern(LOCALTION_REGEXP).max(50),
