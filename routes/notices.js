@@ -23,7 +23,7 @@ router.get("/:noticeId", ctrl.getOne);
 router.post(
   "/",
   authenticate,
-  upload.single("petImg"),
+  upload.single("imgURL"),
   validateBody(schemas.newNoticeSchema),
   ctrl.add
 );
