@@ -9,7 +9,10 @@ const getAll = async (req, res) => {
   const { page = 1, limit = 8, qwery = "", ...filter } = req.query;
   const skip = (page - 1) * limit;
   if (qwery === "") {
-    const data = await Notice.find({ ...filter }, "", { skip, limit: +limit });
+    const data = await Notice.find({ ...filter }, "", { skip, limit: +limit }).populate(
+      "owner",
+      "email"
+    );
 
     if (data.length) {
       return res.json(data);
@@ -23,6 +26,9 @@ const getAll = async (req, res) => {
         skip,
         limit: +limit,
       }
+    ).populate(
+      "owner",
+      "email"
     );
 
     if (data.length) {
@@ -85,7 +91,10 @@ const getFavorites = async (req, res) => {
     const data = await Notice.find({ _id: favoriteNotices }, "", {
       skip,
       limit: +limit,
-    });
+    }).populate(
+      "owner",
+      "email"
+    );
 
     if (data.length) {
       return res.json(data);
@@ -95,7 +104,10 @@ const getFavorites = async (req, res) => {
     const data = await Notice.find({ _id: favoriteNotices }, "", {
       skip,
       limit: +limit,
-    });
+    }).populate(
+      "owner",
+      "email"
+    );
 
     if (data.length) {
       const result = data.filter(notice=>notice.title.toLowerCase().includes(qwery.toLowerCase()))
