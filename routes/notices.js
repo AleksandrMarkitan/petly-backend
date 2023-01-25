@@ -21,11 +21,11 @@ router.get("/:noticeId", ctrl.getOne);
 
 // додавання оголошень відповідно до обраної категорії
 router.post(
-	"/",
-	authenticate,
-	upload.single("imgURL"),
-	validateBody(schemas.newNoticeSchema),
-	ctrl.add
+  "/",
+  authenticate,
+  upload.single("imgURL"),
+  validateBody(schemas.newNoticeSchema),
+  ctrl.add
 );
 
 // додавання та видалення оголошення з обраних
