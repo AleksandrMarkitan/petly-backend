@@ -71,7 +71,6 @@ const newNoticeSchema = Joi.object({
 	location: Joi.string().pattern(LOCALTION_REGEXP).max(50),
 	comments: Joi.string().min(8).max(120).required(),
 	price: Joi.number().integer().min(1).max(1000000),
-	favorite: Joi.boolean(),
 	imgURL: Joi.string()
 });
 

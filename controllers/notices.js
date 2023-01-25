@@ -9,16 +9,27 @@ const getAll = async (req, res) => {
   const { page = 1, limit = 8, qwery = "", ...filter } = req.query;
   const skip = (page - 1) * limit;
   if (qwery === "") {
-    const data = await Notice.find({ ...filter }, "", { skip, limit: +limit }).populate(
-      "owner",
-      "email"
-    );
+    const dataCount = await Notice.count({ ...filter });
+    const data = await Notice.find({ ...filter }, "", {
+      skip,
+      limit: +limit,
+    }).populate("owner", "email");
 
     if (data.length) {
-      return res.json(data);
+      return res.json({
+        total: dataCount,
+        page: +page,
+        limit:+limit,
+        totalPages: Math.ceil(dataCount / limit),
+        notices: data,
+      });
     }
     res.status(204).json({ message: "No Content" });
   } else {
+    const dataCount = await Notice.count({
+      title: { $regex: qwery, $options: "i" },
+      ...filter,
+    });
     const data = await Notice.find(
       { title: { $regex: qwery, $options: "i" }, ...filter },
       "",
@@ -26,13 +37,16 @@ const getAll = async (req, res) => {
         skip,
         limit: +limit,
       }
-    ).populate(
-      "owner",
-      "email"
-    );
+    ).populate("owner", "email");
 
     if (data.length) {
-      return res.json(data);
+      return res.json({
+        totalData: dataCount,
+        page: +page,
+        limit:+limit,
+        totalPages: Math.ceil(dataCount / limit),
+        notices: data,
+      });
     }
     res.status(204).json({ message: "No Content" });
   }
@@ -88,30 +102,39 @@ const getFavorites = async (req, res) => {
   const { qwery = "", page = 1, limit = 8 } = req.query;
   const skip = (page - 1) * limit;
   if (qwery === "") {
+    const dataCount = await Notice.count({ _id: favoriteNotices });
     const data = await Notice.find({ _id: favoriteNotices }, "", {
       skip,
       limit: +limit,
-    }).populate(
-      "owner",
-      "email"
-    );
+    }).populate("owner", "email");
 
     if (data.length) {
-      return res.json(data);
+      return res.json({
+        totalData: dataCount,
+        page: +page,
+        limit:+limit,
+        totalPages: Math.ceil(dataCount / limit),
+        notices: data,
+      });
     }
     res.status(204).json({ message: "No Content" });
-  }else{
+  } else {
     const data = await Notice.find({ _id: favoriteNotices }, "", {
       skip,
       limit: +limit,
-    }).populate(
-      "owner",
-      "email"
-    );
+    }).populate("owner", "email");
 
     if (data.length) {
-      const result = data.filter(notice=>notice.title.toLowerCase().includes(qwery.toLowerCase()))
-      return res.json(result);
+      const result = data.filter((notice) =>
+        notice.title.toLowerCase().includes(qwery.toLowerCase())
+      );
+      return res.json({
+        totalData: result.length,
+        page: +page,
+        limit:+limit,
+        totalPages: Math.ceil(result.length / limit),
+        notices: result,
+      });
     }
     res.status(204).json({ message: "No Content" });
   }
@@ -147,18 +170,35 @@ const getOwner = async (req, res) => {
   const { qwery = "", page = 1, limit = 8 } = req.query;
   const skip = (page - 1) * limit;
   if (qwery === "") {
-    const contacts = await Notice.find({ owner }, "", { skip, limit }).populate(
+    const dataCount = await Notice.count({ owner });
+    const data = await Notice.find({ owner }, "", { skip, limit }).populate(
       "owner",
       "name email"
     );
-    res.json(contacts);
+    return res.json({
+      totalData: dataCount,
+      page: +page,
+      limit:+limit,
+      totalPages: Math.ceil(dataCount / limit),
+      notices: data,
+    });
   } else {
-    const contacts = await Notice.find(
+    const dataCount = await Notice.count({
+      owner,
+      title: { $regex: qwery, $options: "i" },
+    });
+    const data = await Notice.find(
       { owner, title: { $regex: qwery, $options: "i" } },
       "",
       { skip, limit }
     ).populate("owner", "name email");
-    res.json(contacts);
+    return res.json({
+      totalData: dataCount,
+      page: +page,
+      limit:+limit,
+      totalPages: Math.ceil(dataCount / limit),
+      notices: data,
+    });
   }
 };
 
