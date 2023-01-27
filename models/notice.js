@@ -4,10 +4,9 @@ const Joi = require("joi");
 
 const { handleMongooseError } = require("../helpers");
 
-const DATE_REGEXP = /^\d{2}\.\d{2}\.\d{4}$/;
-const LOCALTION_REGEXP = /^\s*(?:\w+\s*,\s*)(?:\w+\s*)$/;
+// const DATE_REGEXP = /^\d{2}\.\d{2}\.\d{4}$/;
+const LOCALTION_REGEXP = /^([A-Za-z-\s]{2,}),\s([A-Za-z-\s]{2,})$/;
 const PRICE_REGEXP = /^[1-9][\d]{0,7}[.\d]{0,3}$/;
-
 // --------mongoose shema--------
 
 const noticeSchema = new Schema(
@@ -25,8 +24,8 @@ const noticeSchema = new Schema(
 		// },
 		birthdate: {
 			type: Date,
-			min: '1970-01-01',
-			max: Date.now(),
+		min: '1990-01-01',
+		max: Date.now(),
 		},
 		breed: { type: String, minlength: 0, maxlength: 24 },
 		sex: {
@@ -65,13 +64,12 @@ const newNoticeSchema = Joi.object({
 		.required(),
 	name: Joi.string().min(2).max(16),
 	// birthdate: Joi.string(),
-	birthdate: Joi.date().greater("1-1-1970").less("now"),
+	birthdate: Joi.date().greater("1-1-1990").less("now"),
 	breed: Joi.string().min(2).max(24),
 	sex: Joi.string().valid("male", "female"),
 	location: Joi.string().pattern(LOCALTION_REGEXP).max(50),
 	comments: Joi.string().min(8).max(120).required(),
 	price: Joi.number().integer().min(1).max(1000000),
-	favorite: Joi.boolean(),
 	imgURL: Joi.string()
 });
 
