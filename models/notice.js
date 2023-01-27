@@ -4,7 +4,7 @@ const Joi = require("joi");
 
 const { handleMongooseError } = require("../helpers");
 
-const DATE_REGEXP = /^\d{2}\.\d{2}\.\d{4}$/;
+// const DATE_REGEXP = /^\d{2}\.\d{2}\.\d{4}$/;
 const LOCALTION_REGEXP = /^([A-Za-z-\s]{2,}),\s([A-Za-z-\s]{2,})$/;
 const PRICE_REGEXP = /^[1-9][\d]{0,7}[.\d]{0,3}$/;
 // --------mongoose shema--------
