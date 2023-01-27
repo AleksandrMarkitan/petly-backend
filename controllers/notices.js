@@ -15,16 +15,13 @@ const getAll = async (req, res) => {
       limit: +limit,
     }).populate("owner", "email");
 
-    if (data.length) {
       return res.json({
         total: dataCount,
         page: +page,
         limit:+limit,
         totalPages: Math.ceil(dataCount / limit),
         notices: data,
-      });
-    }
-    res.status(204).json({ message: "No Content" });
+      });    
   } else {
     const dataCount = await Notice.count({
       title: { $regex: qwery, $options: "i" },
@@ -39,7 +36,6 @@ const getAll = async (req, res) => {
       }
     ).populate("owner", "email");
 
-    if (data.length) {
       return res.json({
         totalData: dataCount,
         page: +page,
@@ -47,8 +43,7 @@ const getAll = async (req, res) => {
         totalPages: Math.ceil(dataCount / limit),
         notices: data,
       });
-    }
-    res.status(204).json({ message: "No Content" });
+    
   }
 };
 
@@ -143,7 +138,7 @@ const getFavorites = async (req, res) => {
 // додавання оголошень відповідно до обраної категорії
 
 const add = async (req, res) => {
-  const { _id: owner } = req.user;
+  const { _id: owner, email } = req.user;
   // додаємо зображення
   const dafaultImgURL =
     "http://res.cloudinary.com/digml0rat/image/upload/v1673906206/Fullstack%20Group%20Project/home-pets_hywfgq.png";
@@ -160,8 +155,8 @@ const add = async (req, res) => {
     ...req.body,
     owner,
     imgURL: imgToSend,
-  });
-  res.status(201).json(result);
+  });  
+  res.status(201).json({...result._doc, owner:{owner,email}});
 };
 
 // отримання оголошень авторизованого користувача створених цим же користувачем та пошуку оголошення по ключовому слову в заголовку
