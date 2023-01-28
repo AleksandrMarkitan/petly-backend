@@ -3,9 +3,9 @@ const Joi = require("joi");
 const { handleMongooseError } = require("../helpers");
 
 const nameRegexp = /^[a-zA-Z]{2,20}$/;
-export const emailRegexp =
+const emailRegexp =
   /^[^-._]{1}[A-Za-z0-9._-]{1,}@[^-._]{1}[A-Za-z0-9.-]{0,}\.[A-Za-z]{2,4}$/;
-export const phoneRegexp = /^\+380\d{9}$/;
+const phoneRegexp = /^\+380\d{9}$/;
 
 const passwordRegexp = /^[A-Za-z0-9!?#$%^&_\-\*]{7,32}$/;
 const cityRegexp =
