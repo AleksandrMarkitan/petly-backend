@@ -15,13 +15,13 @@ const getAll = async (req, res) => {
       limit: +limit,
     }).populate("owner", "email");
 
-      return res.json({
-        total: dataCount,
-        page: +page,
-        limit:+limit,
-        totalPages: Math.ceil(dataCount / limit),
-        notices: data,
-      });    
+    return res.json({
+      total: dataCount,
+      page: +page,
+      limit: +limit,
+      totalPages: Math.ceil(dataCount / limit),
+      notices: data,
+    });
   } else {
     const dataCount = await Notice.count({
       title: { $regex: qwery, $options: "i" },
@@ -36,14 +36,13 @@ const getAll = async (req, res) => {
       }
     ).populate("owner", "email");
 
-      return res.json({
-        totalData: dataCount,
-        page: +page,
-        limit:+limit,
-        totalPages: Math.ceil(dataCount / limit),
-        notices: data,
-      });
-    
+    return res.json({
+      totalData: dataCount,
+      page: +page,
+      limit: +limit,
+      totalPages: Math.ceil(dataCount / limit),
+      notices: data,
+    });
   }
 };
 
@@ -107,7 +106,7 @@ const getFavorites = async (req, res) => {
       return res.json({
         totalData: dataCount,
         page: +page,
-        limit:+limit,
+        limit: +limit,
         totalPages: Math.ceil(dataCount / limit),
         notices: data,
       });
@@ -126,7 +125,7 @@ const getFavorites = async (req, res) => {
       return res.json({
         totalData: result.length,
         page: +page,
-        limit:+limit,
+        limit: +limit,
         totalPages: Math.ceil(result.length / limit),
         notices: result,
       });
@@ -138,7 +137,7 @@ const getFavorites = async (req, res) => {
 // додавання оголошень відповідно до обраної категорії
 
 const add = async (req, res) => {
-  const { _id: owner, email } = req.user;
+  const { _id: owner, email, phone } = req.user;
   // додаємо зображення
   const dafaultImgURL =
     "http://res.cloudinary.com/digml0rat/image/upload/v1673906206/Fullstack%20Group%20Project/home-pets_hywfgq.png";
@@ -155,8 +154,8 @@ const add = async (req, res) => {
     ...req.body,
     owner,
     imgURL: imgToSend,
-  });  
-  res.status(201).json({...result._doc, owner:{owner,email}});
+  });
+  res.status(201).json({ ...result._doc, owner: { owner, email, phone } });
 };
 
 // отримання оголошень авторизованого користувача створених цим же користувачем та пошуку оголошення по ключовому слову в заголовку
@@ -173,7 +172,7 @@ const getOwner = async (req, res) => {
     return res.json({
       totalData: dataCount,
       page: +page,
-      limit:+limit,
+      limit: +limit,
       totalPages: Math.ceil(dataCount / limit),
       notices: data,
     });
@@ -190,7 +189,7 @@ const getOwner = async (req, res) => {
     return res.json({
       totalData: dataCount,
       page: +page,
-      limit:+limit,
+      limit: +limit,
       totalPages: Math.ceil(dataCount / limit),
       notices: data,
     });
