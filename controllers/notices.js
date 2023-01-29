@@ -138,7 +138,7 @@ const getFavorites = async (req, res) => {
 // додавання оголошень відповідно до обраної категорії
 
 const add = async (req, res) => {
-  const { _id: owner, email } = req.user;
+  const { _id: owner, email, phone } = req.user;
   // додаємо зображення
   const dafaultImgURL =
     "http://res.cloudinary.com/digml0rat/image/upload/v1673906206/Fullstack%20Group%20Project/home-pets_hywfgq.png";
@@ -156,7 +156,7 @@ const add = async (req, res) => {
     owner,
     imgURL: imgToSend,
   });
-  res.status(201).json({ ...result._doc, owner: { owner, email } });
+  res.status(201).json({ ...result._doc, owner: { owner, email, phone } });
 };
 
 // отримання оголошень авторизованого користувача створених цим же користувачем та пошуку оголошення по ключовому слову в заголовку
