@@ -6,29 +6,30 @@ const { HttpError, ctrlWrapper } = require("../helpers");
 
 // отримання оголошень по категоріям та пошуку оголошення по ключовому слову в заголовку
 const getAll = async (req, res) => {
+  const { category } = req.params;
   const { page = 1, limit = 8, qwery = "", ...filter } = req.query;
   const skip = (page - 1) * limit;
   if (qwery === "") {
-    const dataCount = await Notice.count({ ...filter });
-    const data = await Notice.find({ ...filter }, "", {
+    const dataCount = await Notice.count({ category,...filter });
+    const data = await Notice.find({ category,...filter }, "", {
       skip,
       limit: +limit,
     }).populate("owner", "email");
 
-      return res.json({
-        total: dataCount,
-        page: +page,
-        limit:+limit,
-        totalPages: Math.ceil(dataCount / limit),
-        notices: data,
-      });    
+    return res.json({
+      total: dataCount,
+      page: +page,
+      limit: +limit,
+      totalPages: Math.ceil(dataCount / limit),
+      notices: data,
+    });
   } else {
     const dataCount = await Notice.count({
-      title: { $regex: qwery, $options: "i" },
+      title: { $regex: qwery, $options: "i" },category,
       ...filter,
     });
     const data = await Notice.find(
-      { title: { $regex: qwery, $options: "i" }, ...filter },
+      { title: { $regex: qwery, $options: "i" }, category,...filter },
       "",
       {
         skip,
@@ -36,14 +37,13 @@ const getAll = async (req, res) => {
       }
     ).populate("owner", "email");
 
-      return res.json({
-        totalData: dataCount,
-        page: +page,
-        limit:+limit,
-        totalPages: Math.ceil(dataCount / limit),
-        notices: data,
-      });
-    
+    return res.json({
+      total: dataCount,
+      page: +page,
+      limit: +limit,
+      totalPages: Math.ceil(dataCount / limit),
+      notices: data,
+    });
   }
 };
 
@@ -105,9 +105,9 @@ const getFavorites = async (req, res) => {
 
     if (data.length) {
       return res.json({
-        totalData: dataCount,
+        total: dataCount,
         page: +page,
-        limit:+limit,
+        limit: +limit,
         totalPages: Math.ceil(dataCount / limit),
         notices: data,
       });
@@ -124,9 +124,9 @@ const getFavorites = async (req, res) => {
         notice.title.toLowerCase().includes(qwery.toLowerCase())
       );
       return res.json({
-        totalData: result.length,
+        total: result.length,
         page: +page,
-        limit:+limit,
+        limit: +limit,
         totalPages: Math.ceil(result.length / limit),
         notices: result,
       });
@@ -155,8 +155,8 @@ const add = async (req, res) => {
     ...req.body,
     owner,
     imgURL: imgToSend,
-  });  
-  res.status(201).json({...result._doc, owner:{owner,email}});
+  });
+  res.status(201).json({ ...result._doc, owner: { owner, email } });
 };
 
 // отримання оголошень авторизованого користувача створених цим же користувачем та пошуку оголошення по ключовому слову в заголовку
@@ -171,9 +171,9 @@ const getOwner = async (req, res) => {
       "name email"
     );
     return res.json({
-      totalData: dataCount,
+      total: dataCount,
       page: +page,
-      limit:+limit,
+      limit: +limit,
       totalPages: Math.ceil(dataCount / limit),
       notices: data,
     });
@@ -188,9 +188,9 @@ const getOwner = async (req, res) => {
       { skip, limit }
     ).populate("owner", "name email");
     return res.json({
-      totalData: dataCount,
+      total: dataCount,
       page: +page,
-      limit:+limit,
+      limit: +limit,
       totalPages: Math.ceil(dataCount / limit),
       notices: data,
     });
