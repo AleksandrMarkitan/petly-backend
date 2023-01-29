@@ -7,17 +7,17 @@ const ctrl = require("../controllers/notices");
 const express = require("express");
 const router = express.Router();
 
-// отримання оголошень по категоріям
-router.get("/", ctrl.getAll);
-
 // отримання оголошень авторизованого користувача доданих ним же в обрані
-router.get("/favorites", authenticate, ctrl.getFavorites);
+router.get("/favorite", authenticate, ctrl.getFavorites);
 
 //отримання оголошень авторизованого користувача створених цим же користувачем
 router.get("/owner", authenticate, ctrl.getOwner);
 
+// отримання оголошень по категоріям
+router.get("/:category", ctrl.getAll);
+
 // отримання одного оголошення
-router.get("/:noticeId", ctrl.getOne);
+router.get("/notice/:noticeId", ctrl.getOne);
 
 // додавання оголошень відповідно до обраної категорії
 router.post(

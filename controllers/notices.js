@@ -6,11 +6,12 @@ const { HttpError, ctrlWrapper } = require("../helpers");
 
 // отримання оголошень по категоріям та пошуку оголошення по ключовому слову в заголовку
 const getAll = async (req, res) => {
+  const { category } = req.params;
   const { page = 1, limit = 8, qwery = "", ...filter } = req.query;
   const skip = (page - 1) * limit;
   if (qwery === "") {
-    const dataCount = await Notice.count({ ...filter });
-    const data = await Notice.find({ ...filter }, "", {
+    const dataCount = await Notice.count({ category,...filter });
+    const data = await Notice.find({ category,...filter }, "", {
       skip,
       limit: +limit,
     }).populate("owner", "email");
@@ -24,11 +25,11 @@ const getAll = async (req, res) => {
     });
   } else {
     const dataCount = await Notice.count({
-      title: { $regex: qwery, $options: "i" },
+      title: { $regex: qwery, $options: "i" },category,
       ...filter,
     });
     const data = await Notice.find(
-      { title: { $regex: qwery, $options: "i" }, ...filter },
+      { title: { $regex: qwery, $options: "i" }, category,...filter },
       "",
       {
         skip,
@@ -37,7 +38,7 @@ const getAll = async (req, res) => {
     ).populate("owner", "email");
 
     return res.json({
-      totalData: dataCount,
+      total: dataCount,
       page: +page,
       limit: +limit,
       totalPages: Math.ceil(dataCount / limit),
@@ -104,7 +105,7 @@ const getFavorites = async (req, res) => {
 
     if (data.length) {
       return res.json({
-        totalData: dataCount,
+        total: dataCount,
         page: +page,
         limit: +limit,
         totalPages: Math.ceil(dataCount / limit),
@@ -123,7 +124,7 @@ const getFavorites = async (req, res) => {
         notice.title.toLowerCase().includes(qwery.toLowerCase())
       );
       return res.json({
-        totalData: result.length,
+        total: result.length,
         page: +page,
         limit: +limit,
         totalPages: Math.ceil(result.length / limit),
@@ -170,7 +171,7 @@ const getOwner = async (req, res) => {
       "name email"
     );
     return res.json({
-      totalData: dataCount,
+      total: dataCount,
       page: +page,
       limit: +limit,
       totalPages: Math.ceil(dataCount / limit),
@@ -187,7 +188,7 @@ const getOwner = async (req, res) => {
       { skip, limit }
     ).populate("owner", "name email");
     return res.json({
-      totalData: dataCount,
+      total: dataCount,
       page: +page,
       limit: +limit,
       totalPages: Math.ceil(dataCount / limit),
